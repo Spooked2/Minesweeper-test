@@ -4,13 +4,48 @@
 }
 
 body {
-    margin: 0 20vw;
+    margin: 0 18vw;
     background-color: lightslategray;
 }
 
 #gameContainer {
     padding: 2vw;
     background-color: lightgray;
+}
+
+#details {
+    margin-bottom: 1vw;
+    box-shadow: 4px 2px 0 2px whitesmoke, -3px -1px 0 3px #484848;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1vw;
+    gap: 1vw;
+}
+
+#details p {
+    margin: 0.1vw;
+}
+
+#stats,
+#settings {
+    display: flex;
+    flex-direction: column;
+}
+
+#settings {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1vw;
+}
+
+#difficultyButtons,
+#fieldSizeButtons {
+    display: flex;
+    flex-direction: row;
+    gap: 0.3vw;
+    justify-content: space-between;
 }
 
 #field {
