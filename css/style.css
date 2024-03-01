@@ -20,7 +20,10 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 1vw;
-    gap: 1vw;
+}
+
+#details>div:first-child {
+    width: 20%;
 }
 
 #details p {
@@ -31,6 +34,13 @@ body {
 #settings {
     display: flex;
     flex-direction: column;
+}
+
+#stats div {
+    display: flex;
+    flex-direction: row;
+    /*justify-content: space-between;*/
+    gap: 0.5vw;
 }
 
 #settings {
