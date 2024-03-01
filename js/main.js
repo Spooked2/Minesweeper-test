@@ -213,6 +213,11 @@ function dig(tile) {
     }
 }
 
+/**
+ *
+ * @param {HTMLDivElement} tile
+ * @returns {*[]}
+ */
 function getSurroundingTiles(tile) {
 
     const tileIdNumber = parseInt(tile.id.replace(/[^0-9]/g, ''), 10);
@@ -362,7 +367,7 @@ function settingsClickHandler(e) {
         switch (e.target.id) {
             case 'easy': difficultyPercentage = 7.5; updateStat('currentDifficulty', 'Easy'); break;
             case 'intermediate': difficultyPercentage = 5; updateStat('currentDifficulty', 'Intermediate'); break;
-            case 'hard': difficultyPercentage = 3.5; updateStat('currentDifficulty', 'Hard'); break;
+            case 'hard': difficultyPercentage = 4; updateStat('currentDifficulty', 'Hard'); break;
 
             case 'small': width = 10; prepareGrid(); updateStat('currentFieldSize', 'Small'); break;
             case 'medium': width = 15; prepareGrid(); updateStat('currentFieldSize', 'Medium'); break;
