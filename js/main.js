@@ -96,7 +96,7 @@ function resetGame() {
 
 }
 
-function setMines () {
+function setMines() {
 
     mineAmount = Math.floor(totalTiles / difficultyPercentage);
 
@@ -159,46 +159,46 @@ function clickHandler(e) {
 
     if (gameOver) {
         resetGame();
+        return;
+    }
+
+    if (e.target.classList.contains('filled')) {
+        dig(e.target);
+
+        if (!e.target.innerText) {
+            digSurrounding(e.target);
+        }
 
     } else {
+        if (e.target.innerText) {
 
-        if (e.target.classList.contains('filled')) {
-            dig(e.target);
+            let surroundingTiles = getSurroundingTiles(e.target);
+            let surroundingFlags = 0;
 
-            if (!e.target.innerText) {
+            for (const surroundingTile of surroundingTiles) {
+                if (surroundingTile.classList.contains('flag')) {
+                    surroundingFlags++;
+                }
+            }
+
+            if (parseInt(e.target.innerText, 10) === surroundingFlags) {
                 digSurrounding(e.target);
             }
-        } else {
-            if (e.target.innerText) {
-
-                let surroundingTiles = getSurroundingTiles(e.target);
-                let surroundingFlags = 0;
-
-                for (const surroundingTile of surroundingTiles) {
-                    if (surroundingTile.classList.contains('flag')) {
-                        surroundingFlags++;
-                    }
-                }
-
-                if (parseInt(e.target.innerText, 10) === surroundingFlags) {
-                    digSurrounding(e.target);
-                }
-            }
         }
-
-        if (gameOver) {
-            revealMines();
-            let wrongFlags = getWrongFlags();
-            for (const wrongFlag of wrongFlags) {
-                wrongFlag.style.fontSize = '2vw';
-                wrongFlag.style.color = 'black';
-                wrongFlag.innerText = 'X';
-            }
-        } else {
-            checkWin();
-        }
-
     }
+
+    if (gameOver) {
+        revealMines();
+        let wrongFlags = getWrongFlags();
+        for (const wrongFlag of wrongFlags) {
+            wrongFlag.style.fontSize = '2vw';
+            wrongFlag.style.color = 'black';
+            wrongFlag.innerText = 'X';
+        }
+    } else {
+        checkWin();
+    }
+
 
 }
 
@@ -217,18 +217,19 @@ function rightClickHandler(e) {
 
 function dig(tile) {
 
-    if (!tile.classList.contains('flag')) {
-
-        if (tile.classList.contains('mine')) {
-            gameOver = true;
-            loss = true;
-        }
-
-        if (tile.classList.contains('filled')) {
-            tile.classList.replace('filled', 'empty');
-        }
-
+    if (tile.classList.contains('flag')) {
+        return;
     }
+
+    if (tile.classList.contains('mine')) {
+        gameOver = true;
+        loss = true;
+    }
+
+    if (tile.classList.contains('filled')) {
+        tile.classList.replace('filled', 'empty');
+    }
+
 }
 
 /**
@@ -349,24 +350,27 @@ function revealMines() {
 function checkWin() {
     const flagged = document.getElementsByClassName('flag');
 
-    if (flagged.length === mineAmount) {
-        const wrongFlags = getWrongFlags();
-
-        if (wrongFlags.length === 0) {
-
-            for (let mine of mines) {
-                mine.style.backgroundColor = 'green';
-            }
-
-            let remainingFilledTiles = document.getElementsByClassName('filled');
-            for (const remainingFilledTile of remainingFilledTiles) {
-                dig(remainingFilledTile);
-            }
-
-            win = true;
-            gameOver = true;
-        }
+    if (flagged.length !== mineAmount) {
+        return;
     }
+
+    const wrongFlags = getWrongFlags();
+
+    if (wrongFlags.length === 0) {
+
+        for (let mine of mines) {
+            mine.style.backgroundColor = 'green';
+        }
+
+        let remainingFilledTiles = document.getElementsByClassName('filled');
+        for (const remainingFilledTile of remainingFilledTiles) {
+            dig(remainingFilledTile);
+        }
+
+        win = true;
+        gameOver = true;
+    }
+
 }
 
 function getWrongFlags() {
@@ -380,42 +384,43 @@ function getWrongFlags() {
 }
 
 function settingsClickHandler(e) {
-    if (e.target.tagName === 'BUTTON') {
-
-        switch (e.target.id) {
-            case 'easy':
-                difficultyPercentage = 7.5;
-                updateDisplayedStat('currentDifficulty', 'Easy');
-                break;
-            case 'intermediate':
-                difficultyPercentage = 5;
-                updateDisplayedStat('currentDifficulty', 'Intermediate');
-                break;
-            case 'hard':
-                difficultyPercentage = 4;
-                updateDisplayedStat('currentDifficulty', 'Hard');
-                break;
-
-            case 'small':
-                width = 10;
-                prepareGrid();
-                updateDisplayedStat('currentFieldSize', 'Small');
-                break;
-            case 'medium':
-                width = 15;
-                prepareGrid();
-                updateDisplayedStat('currentFieldSize', 'Medium');
-                break;
-            case 'large':
-                width = 20;
-                prepareGrid();
-                updateDisplayedStat('currentFieldSize', 'Large');
-                break;
-        }
-
-        resetGame();
-
+    if (e.target.tagName !== 'BUTTON') {
+        return;
     }
+
+    switch (e.target.id) {
+        case 'easy':
+            difficultyPercentage = 7.5;
+            updateDisplayedStat('currentDifficulty', 'Easy');
+            break;
+        case 'intermediate':
+            difficultyPercentage = 5;
+            updateDisplayedStat('currentDifficulty', 'Intermediate');
+            break;
+        case 'hard':
+            difficultyPercentage = 4;
+            updateDisplayedStat('currentDifficulty', 'Hard');
+            break;
+
+        case 'small':
+            width = 10;
+            prepareGrid();
+            updateDisplayedStat('currentFieldSize', 'Small');
+            break;
+        case 'medium':
+            width = 15;
+            prepareGrid();
+            updateDisplayedStat('currentFieldSize', 'Medium');
+            break;
+        case 'large':
+            width = 20;
+            prepareGrid();
+            updateDisplayedStat('currentFieldSize', 'Large');
+            break;
+    }
+
+    resetGame();
+
 }
 
 function updateDisplayedStat(stat, newValue) {
