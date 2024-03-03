@@ -2,6 +2,7 @@ window.addEventListener('load', init);
 
 let field;
 let settings;
+let tiles;
 let width = 10;
 let height = 15;
 let totalTiles = 0;
@@ -70,24 +71,17 @@ function prepareGrid() {
         field.appendChild(div);
     }
 
+    tiles = document.getElementsByClassName('tile');
+
 }
 
 function resetGame() {
 
-    if (loss) {
-        losses++;
-        updateStat('losses', losses);
-        loss = false;
-    } else if (win) {
-        wins++;
-        updateStat('wins', wins);
-        win = false;
-    }
+    updateStats();
+
     gameOver = false;
     mines = [];
     connectedBlankTiles = [];
-
-    let tiles = document.getElementsByClassName('tile');
 
     for (const tile of tiles) {
         tile.innerText = '';
@@ -98,6 +92,11 @@ function resetGame() {
         tile.classList.add('filled');
     }
 
+    setMines();
+
+}
+
+function setMines () {
 
     mineAmount = Math.floor(totalTiles / difficultyPercentage);
 
@@ -139,6 +138,19 @@ function resetGame() {
     }
 
     mines = document.getElementsByClassName('mine');
+}
+
+function updateStats() {
+
+    if (loss) {
+        losses++;
+        updateDisplayedStat('losses', losses);
+        loss = false;
+    } else if (win) {
+        wins++;
+        updateDisplayedStat('wins', wins);
+        win = false;
+    }
 
 }
 
@@ -373,31 +385,31 @@ function settingsClickHandler(e) {
         switch (e.target.id) {
             case 'easy':
                 difficultyPercentage = 7.5;
-                updateStat('currentDifficulty', 'Easy');
+                updateDisplayedStat('currentDifficulty', 'Easy');
                 break;
             case 'intermediate':
                 difficultyPercentage = 5;
-                updateStat('currentDifficulty', 'Intermediate');
+                updateDisplayedStat('currentDifficulty', 'Intermediate');
                 break;
             case 'hard':
                 difficultyPercentage = 4;
-                updateStat('currentDifficulty', 'Hard');
+                updateDisplayedStat('currentDifficulty', 'Hard');
                 break;
 
             case 'small':
                 width = 10;
                 prepareGrid();
-                updateStat('currentFieldSize', 'Small');
+                updateDisplayedStat('currentFieldSize', 'Small');
                 break;
             case 'medium':
                 width = 15;
                 prepareGrid();
-                updateStat('currentFieldSize', 'Medium');
+                updateDisplayedStat('currentFieldSize', 'Medium');
                 break;
             case 'large':
                 width = 20;
                 prepareGrid();
-                updateStat('currentFieldSize', 'Large');
+                updateDisplayedStat('currentFieldSize', 'Large');
                 break;
         }
 
@@ -406,7 +418,7 @@ function settingsClickHandler(e) {
     }
 }
 
-function updateStat(stat, newValue) {
+function updateDisplayedStat(stat, newValue) {
     let element;
 
     element = document.getElementById(stat);
