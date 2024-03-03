@@ -40,9 +40,15 @@ function prepareGrid() {
     field.style.gridTemplateRows = `repeat(${height}, ${100 / height}%)`;
 
     switch (width) {
-        case 10: field.style.width = '25vw'; break;
-        case 15: field.style.width = '35vw'; break;
-        case 20: field.style.width = '45vw'; break;
+        case 10:
+            field.style.width = '25vw';
+            break;
+        case 15:
+            field.style.width = '35vw';
+            break;
+        case 20:
+            field.style.width = '45vw';
+            break;
     }
 
     for (let i = 1; i <= totalTiles; i++) {
@@ -69,9 +75,9 @@ function prepareGrid() {
 function resetGame() {
 
     if (loss) {
-    losses++;
-    updateStat('losses', losses);
-    loss = false;
+        losses++;
+        updateStat('losses', losses);
+        loss = false;
     } else if (win) {
         wins++;
         updateStat('wins', wins);
@@ -365,13 +371,34 @@ function settingsClickHandler(e) {
     if (e.target.tagName === 'BUTTON') {
 
         switch (e.target.id) {
-            case 'easy': difficultyPercentage = 7.5; updateStat('currentDifficulty', 'Easy'); break;
-            case 'intermediate': difficultyPercentage = 5; updateStat('currentDifficulty', 'Intermediate'); break;
-            case 'hard': difficultyPercentage = 4; updateStat('currentDifficulty', 'Hard'); break;
+            case 'easy':
+                difficultyPercentage = 7.5;
+                updateStat('currentDifficulty', 'Easy');
+                break;
+            case 'intermediate':
+                difficultyPercentage = 5;
+                updateStat('currentDifficulty', 'Intermediate');
+                break;
+            case 'hard':
+                difficultyPercentage = 4;
+                updateStat('currentDifficulty', 'Hard');
+                break;
 
-            case 'small': width = 10; prepareGrid(); updateStat('currentFieldSize', 'Small'); break;
-            case 'medium': width = 15; prepareGrid(); updateStat('currentFieldSize', 'Medium'); break;
-            case 'large': width = 20; prepareGrid(); updateStat('currentFieldSize', 'Large'); break;
+            case 'small':
+                width = 10;
+                prepareGrid();
+                updateStat('currentFieldSize', 'Small');
+                break;
+            case 'medium':
+                width = 15;
+                prepareGrid();
+                updateStat('currentFieldSize', 'Medium');
+                break;
+            case 'large':
+                width = 20;
+                prepareGrid();
+                updateStat('currentFieldSize', 'Large');
+                break;
         }
 
         resetGame();
@@ -382,6 +409,6 @@ function settingsClickHandler(e) {
 function updateStat(stat, newValue) {
     let element;
 
-     element = document.getElementById(stat);
-     element.innerText = newValue;
+    element = document.getElementById(stat);
+    element.innerText = newValue;
 }
