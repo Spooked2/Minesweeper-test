@@ -3,6 +3,11 @@ window.addEventListener('load', init);
 let field;
 let settings;
 let tiles;
+let timerElement;
+let timer = null;
+let time = 0;
+let bestTime = 0;
+let timeString;
 let width = 10;
 let height = 15;
 let totalTiles = 0;
@@ -16,7 +21,6 @@ let wins = 0;
 let losses = 0;
 let loss = false;
 let win = false;
-let bestTime = '--:--';
 
 function init() {
     settings = document.getElementById('settings');
@@ -25,6 +29,8 @@ function init() {
     field = document.getElementById('field');
     field.addEventListener('click', clickHandler);
     field.addEventListener('contextmenu', rightClickHandler);
+
+    timerElement = document.getElementById('timer');
 
     prepareGrid();
     resetGame();
@@ -76,12 +82,13 @@ function prepareGrid() {
 }
 
 function resetGame() {
-
     updateStats();
 
     gameOver = false;
     mines = [];
     connectedBlankTiles = [];
+    time = 0;
+    document.getElementById('timer').innerText = '00:00';
 
     for (const tile of tiles) {
         tile.innerText = '';
@@ -149,6 +156,10 @@ function updateStats() {
     } else if (win) {
         wins++;
         updateDisplayedStat('wins', wins);
+        if (bestTime < time) {
+            bestTime = time;
+            updateDisplayedStat('bestTime', timeString)
+        }
         win = false;
     }
 
@@ -156,6 +167,10 @@ function updateStats() {
 
 
 function clickHandler(e) {
+
+    if (!timer && !gameOver) {
+        timer = setInterval(timerManager, 1000);
+    }
 
     if (gameOver) {
         resetGame();
@@ -224,6 +239,8 @@ function dig(tile) {
     if (tile.classList.contains('mine')) {
         gameOver = true;
         loss = true;
+        clearInterval(timer);
+        timer = null;
     }
 
     if (tile.classList.contains('filled')) {
@@ -305,10 +322,15 @@ function digSurrounding(tile) {
 
         while (surroundingNextTile.length === 0) {
             nextTile = connectedBlankTiles.shift();
+            if (!nextTile) {
+                break;
+            }
             surroundingNextTile = getSurroundingTiles(nextTile).filter(checkIfFilled);
         }
 
-        digSurrounding(nextTile);
+        if (nextTile) {
+            digSurrounding(nextTile);
+        }
     }
 
 }
@@ -369,6 +391,8 @@ function checkWin() {
 
         win = true;
         gameOver = true;
+        clearInterval(timer);
+        timer = null;
     }
 
 }
@@ -428,4 +452,27 @@ function updateDisplayedStat(stat, newValue) {
 
     element = document.getElementById(stat);
     element.innerText = newValue;
+}
+
+function timerManager() {
+
+    time++;
+
+    timeString = '';
+
+    let seconds = time % 60;
+    let minutes = Math.floor(time / 60);
+
+    if (minutes < 10) {
+        timeString += 0
+    }
+    timeString += `${minutes}:`;
+
+    if (seconds < 10) {
+        timeString += 0;
+    }
+    timeString += seconds;
+
+    timerElement.innerText = timeString;
+
 }
