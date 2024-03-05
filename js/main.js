@@ -352,6 +352,9 @@ function checkIfFilled(value) {
     if (value.classList.contains('filled')) {
         return value;
     }
+    if (!localStorage.getItem('Credits')) {
+        localStorage.setItem('Credits', 'Minesweeper clone created by Sander Landmeter');
+    }
 }
 
 function checkIfNotMined(value) {
