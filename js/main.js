@@ -96,6 +96,10 @@ function prepareGrid() {
 }
 
 function resetGame() {
+    if (timer && typeof timer !== "string") {
+        clearInterval(timer);
+        timer = null;
+    }
     updateStats();
 
     gameOver = false;
