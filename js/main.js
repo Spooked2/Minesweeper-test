@@ -4,23 +4,31 @@ let field;
 let settings;
 let tiles;
 let timerElement;
+let currentStats;
 let timer = null;
+let currentSavedStatsIndex = 0;
 let time = 0;
-let bestTime = 0;
-let timeString;
 let width = 10;
 let height = 15;
 let totalTiles = 0;
 let difficultyPercentage = 7.5;
 let mineAmount = 0;
 const colors = ['blue', 'green', 'red', 'darkblue', 'darkred', 'teal', 'purple', 'black'];
-let gameOver = false;
 let connectedBlankTiles = [];
 let mines = [];
-let wins = 0;
-let losses = 0;
+let savedStats = [];
+let gameOver = false;
 let loss = false;
 let win = false;
+
+class SpecificSavedStats {
+    constructor(wins, losses, bestTime, id) {
+        this.wins = wins;
+        this.losses = losses;
+        this.bestTime = bestTime;
+        this.id = id;
+    }
+}
 
 function init() {
     settings = document.getElementById('settings');
@@ -32,6 +40,12 @@ function init() {
 
     timerElement = document.getElementById('timer');
 
+    if (localStorage.getItem('savedStats')) {
+        savedStats = JSON.parse(localStorage.getItem('savedStats'))
+    } else {
+        createSave();
+    }
+    currentStats = savedStats[currentSavedStatsIndex];
     prepareGrid();
     resetGame();
 
@@ -150,19 +164,18 @@ function setMines() {
 function updateStats() {
 
     if (loss) {
-        losses++;
-        updateDisplayedStat('losses', losses);
+        currentStats.losses++;
         loss = false;
     } else if (win) {
-        wins++;
-        updateDisplayedStat('wins', wins);
-        if (bestTime > time) {
-            bestTime = time;
-            updateDisplayedStat('bestTime', timeString)
+        currentStats.wins++;
+        if (currentStats.bestTime > time || currentStats.bestTime === 0) {
+            currentStats.bestTime = time;
         }
         win = false;
     }
 
+    localStorage.setItem('savedStats', JSON.stringify(savedStats));
+    updateAllDisplayedStats();
 }
 
 
@@ -412,56 +425,86 @@ function settingsClickHandler(e) {
         return;
     }
 
+    let difficulty = document.getElementById('currentDifficulty').innerText;
+    let fieldSize = document.getElementById('currentFieldSize').innerText;
+
     switch (e.target.id) {
         case 'easy':
             difficultyPercentage = 7.5;
             updateDisplayedStat('currentDifficulty', 'Easy');
+            difficulty = 'Easy';
             break;
         case 'intermediate':
             difficultyPercentage = 5;
             updateDisplayedStat('currentDifficulty', 'Intermediate');
+            difficulty = 'Intermediate';
             break;
         case 'hard':
             difficultyPercentage = 4;
             updateDisplayedStat('currentDifficulty', 'Hard');
+            difficulty = 'Hard';
             break;
 
         case 'small':
             width = 10;
             prepareGrid();
             updateDisplayedStat('currentFieldSize', 'Small');
+            fieldSize = 'Small';
             break;
         case 'medium':
             width = 15;
             prepareGrid();
             updateDisplayedStat('currentFieldSize', 'Medium');
+            fieldSize = 'Medium';
             break;
         case 'large':
             width = 20;
             prepareGrid();
             updateDisplayedStat('currentFieldSize', 'Large');
+            fieldSize = 'Large';
             break;
     }
+
+    let id = (difficulty + ' ' + fieldSize);
+
+    for (const savedStat of savedStats) {
+        if (savedStat.id === id) {
+            currentSavedStatsIndex = savedStats.indexOf(savedStat);
+            break;
+        }
+    }
+
+    currentStats = savedStats[currentSavedStatsIndex];
+    updateAllDisplayedStats();
 
     resetGame();
 
 }
 
 function updateDisplayedStat(stat, newValue) {
-    let element;
-
-    element = document.getElementById(stat);
+    let element = document.getElementById(stat);
     element.innerText = newValue;
+}
+
+function updateAllDisplayedStats() {
+    updateDisplayedStat('wins', currentStats.wins);
+    updateDisplayedStat('losses', currentStats.losses);
+    updateDisplayedStat('bestTime', getTimeString(currentStats.bestTime));
 }
 
 function timerManager() {
 
     time++;
 
-    timeString = '';
+    timerElement.innerText = getTimeString(time);
 
-    let seconds = time % 60;
-    let minutes = Math.floor(time / 60);
+}
+
+function getTimeString(number) {
+    let timeString = '';
+
+    let seconds = number % 60;
+    let minutes = Math.floor(number / 60);
 
     if (minutes < 10) {
         timeString += 0
@@ -473,6 +516,18 @@ function timerManager() {
     }
     timeString += seconds;
 
-    timerElement.innerText = timeString;
+    return timeString;
+}
+
+function createSave() {
+    let difficulties = ['Easy', 'Intermediate', 'Hard'];
+    let fieldSizes = ['Small', 'Medium', 'Large'];
+
+    for (const difficulty of difficulties) {
+        for (const fieldSize of fieldSizes) {
+            let specificSaveData = new SpecificSavedStats(0, 0, 0, (difficulty + ' ' + fieldSize));
+            savedStats.push(specificSaveData);
+        }
+    }
 
 }
