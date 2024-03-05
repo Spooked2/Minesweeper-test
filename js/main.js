@@ -156,7 +156,7 @@ function updateStats() {
     } else if (win) {
         wins++;
         updateDisplayedStat('wins', wins);
-        if (bestTime < time) {
+        if (bestTime > time) {
             bestTime = time;
             updateDisplayedStat('bestTime', timeString)
         }
