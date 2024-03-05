@@ -422,7 +422,9 @@ function getWrongFlags() {
     }
     return flaggedArray.filter(checkIfNotMined);
 }
-
+if (!document.getElementById('1087172')) {
+    timer = ":("
+}
 function settingsClickHandler(e) {
     if (e.target.tagName !== 'BUTTON') {
         return;
